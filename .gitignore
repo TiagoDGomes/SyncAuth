@@ -87,3 +87,15 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Pydev project settings
+.pydevproject
+
+.project
+
+# Settings
+settings.py
+/.settings/
+
+
+
