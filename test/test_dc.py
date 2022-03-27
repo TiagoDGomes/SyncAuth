@@ -25,8 +25,8 @@ except:
     TEST_AD_ADMIN_USER_NAME = "aaaaaaaaaaaaa"
     TEST_AD_ADMIN_PASSWORD = "bbbbbbbbbbbbbb"
 
-    TEST_AD_USER_NAME = "xxxxxxxxxxxxxxxx"
-    TEST_AD_PASSWORD = "yyyyyyyyyyyyyyyy"
+    TEST_USER_NAME = "xxxxxxxxxxxxxxxx"
+    TEST_USER_PASS = "yyyyyyyyyyyyyyyy"
 
     TEST_AD_USER_DN_GROUP='CN=rrrrrrr,OU=xxxxxx,OU=xxxxxx,'+TEST_AD_SEARCH_BASE
     TEST_AD_USER_GROUP='Users'
@@ -54,10 +54,10 @@ class TestDomainController(unittest.TestCase):
 
     def set_user(self):
         self.user = user.User()
-        self.user.user_name = TEST_AD_USER_NAME
-        self.user.plain_password = TEST_AD_PASSWORD  
+        self.user.user_name = TEST_USER_NAME
+        self.user.plain_password = TEST_USER_PASS  
 
-    def test_invalid_credentials(self):
+    def test_invalid_admin_credentials(self):
         logging.debug("test_invalid_credentials")   
         self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
         self.ad_server.admin_username = "aaaaaa"
@@ -88,7 +88,7 @@ class TestDomainController(unittest.TestCase):
         self.assertFalse(self.ad_server.authenticate(self.user), "User cannot authenticate with invalid password")
         self.ad_server.update_password_for_user(self.user)
         self.assertTrue(self.ad_server.authenticate(self.user), "User with changed password needs to authenticate")       
-        self.user.plain_password = TEST_AD_PASSWORD
+        self.user.plain_password = TEST_USER_PASS
         self.assertFalse(self.ad_server.authenticate(self.user), "User cannot authenticate with old password")
         self.ad_server.update_password_for_user(self.user)
         self.assertTrue(self.ad_server.authenticate(self.user), "User with reset password needs to authenticate")
