@@ -26,14 +26,14 @@ import warnings
 
 class AuthServer:
     ''' AuthServer class model '''
-    admin_username = None
-    admin_password = None
-    _connection = None
 
-    def __init__(self, address, domain, name=None):
+    def __init__(self, address, domain, name=None, admin_username=None, admin_password=None):
         self.address = address
         self.domain = domain
         self.name = (name if name else domain)
+        self.admin_username = admin_username
+        self.admin_password = admin_password
+        self._connection = None
 
     def sync_user(self, user):
         raise ServerUnimplementedException("Implementation sync_user?")
@@ -69,7 +69,7 @@ class ServerException(Exception):
     pass
 
 
-class ServerEmptyValueException(ServerException):
+class ServerEmptyValuePropertyException(ServerException):
     pass
 
 

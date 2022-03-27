@@ -1,4 +1,4 @@
-from models.server import AuthServer
+from models.server import AuthServer, ServerEmptyValuePropertyException
 
 
 import logging
@@ -16,9 +16,8 @@ class LDAPServer(AuthServer):
                  user_auth_format=None,
                  user_group_attribute=None
                  ):
+        super(LDAPServer, self).__init__(address, domain)
         self.required_values = required_values
-        self.domain = domain
-        self.address = address
         self.auto_bind = auto_bind
         self.version = version
         self.user_as_auth = user_as_auth
@@ -33,7 +32,7 @@ class LDAPServer(AuthServer):
         ''' Check if connection is active '''
         logging.debug(("check_connection", ))
         if not self.search_base:
-            raise ServerEmptyValueException("search_base")
+            raise ServerEmptyValuePropertyException("search_base")
         if self._connection is None or self._connection.closed:
             logging.debug(("check_connection disconnected", ))
             return self.connect()
@@ -64,7 +63,7 @@ class LDAPServer(AuthServer):
         ''' Authenticates the user with username and password. '''
         logging.debug((user.user_name, "authenticate"))
         if not self.search_base:
-            raise ServerEmptyValueException("search_base")
+            raise ServerEmptyValuePropertyException("search_base")
         authenticated = False
         if self.user_as_auth:
             if self.connect(username=user.user_name, password=user.plain_password):
