@@ -2,12 +2,11 @@ from models.server.ldap import LDAPServer
 
 class DomainControllerServer(LDAPServer):
     def __init__(self, *args, **kwargs):
-        super(DomainControllerServer, self).__init__(
-            field_user_password="unicodePwd",
-            user_group_attribute="memberOf",
-            search_user_filter="(|(userPrincipalName={username})(cn={username})(sAMAccountName={username}))",
-            user_auth_format="{username}@{domain}",
-            *args, **kwargs)
+        super(DomainControllerServer, self).__init__(*args, **kwargs)        
+        self.field_user_password="unicodePwd"
+        self.user_group_attribute="memberOf"
+        self.search_user_filter="(|(userPrincipalName={username})(cn={username})(sAMAccountName={username}))"
+        self.user_auth_format="{username}@{domain}"
 
     def sync_user(self, user):
         print("fake sync")
