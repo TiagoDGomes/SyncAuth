@@ -4,7 +4,8 @@
 import logging
 import unittest
 import sys
-from models import server, user
+from models.server.dc import DomainControllerServer
+from models import user
 from pprint import pprint
 
 
@@ -44,9 +45,9 @@ except:
 
 
 
-class TestADServer(unittest.TestCase):
+class TestDomainController(unittest.TestCase):
     def set_normal(self):      
-        self.ad_server = server.DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
         self.ad_server.admin_username = TEST_AD_ADMIN_USER_NAME
         self.ad_server.admin_password = TEST_AD_ADMIN_PASSWORD
         self.ad_server.search_base = TEST_AD_SEARCH_BASE   
@@ -58,7 +59,7 @@ class TestADServer(unittest.TestCase):
 
     def test_invalid_credentials(self):
         logging.debug("test_invalid_credentials")   
-        self.ad_server = server.DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
         self.ad_server.admin_username = "aaaaaa"
         self.ad_server.admin_password = "bbbbbb"
         self.ad_server.search_base = TEST_AD_SEARCH_BASE
@@ -96,7 +97,7 @@ class TestADServer(unittest.TestCase):
 
         
     def test_error_search_base_empty(self):        
-        self.ad_server = server.DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
         self.ad_server.admin_username = TEST_AD_ADMIN_USER_NAME
         self.ad_server.admin_password = TEST_AD_ADMIN_PASSWORD
         self.set_user()
