@@ -3,20 +3,23 @@
 
 import logging
 import unittest
-import sys
 from models.server.dc import DomainControllerServer
+from models import server as server_cls
 from models import user
 from pprint import pprint
 
 
-logging.basicConfig(encoding='utf-8', level=logging.DEBUG, 
-        #filename='test.log', 
-        stream=sys.stdout,
-)
 
 try:
     from test.local_config import *
-except: 
+except Exception as e: 
+    logging.basicConfig(encoding='utf-8', level=logging.DEBUG, 
+        #filename='test.log', 
+        stream=sys.stdout,
+    ) 
+    logging.debug(('import local config error', e))
+ 
+
     TEST_AD_SERVER_ADDRESS = "192.168.0.1"
     TEST_AD_SERVER_DOMAIN = "abc.example.com"
     TEST_AD_USER_AUTH_FORMAT = "{username}@{domain}"
@@ -101,8 +104,9 @@ class TestDomainController(unittest.TestCase):
         self.ad_server.admin_username = TEST_AD_ADMIN_USER_NAME
         self.ad_server.admin_password = TEST_AD_ADMIN_PASSWORD
         self.set_user()
-        with self.assertRaises(Exception):            
-            self.ad_server.check_connection()         
+        with self.assertRaises(server_cls.ServerEmptyValuePropertyException):            
+            self.ad_server.check_connection() 
+        with self.assertRaises(server_cls.ServerEmptyValuePropertyException):           
             self.ad_server.authenticate(self.user)
 
 
