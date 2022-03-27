@@ -21,7 +21,7 @@
 # If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-
+import warnings
 
 
 class AuthServer:
@@ -39,13 +39,15 @@ class AuthServer:
         raise ServerUnimplementedException("Implementation sync_user?")
 
     def check_connection(self):
-        self._connection = None
-        raise ServerUnimplementedException("Implementation check_connection?")
+        warnings.warn("check_connection", ServerUnimplementedWarning)
+        return False
 
     def authenticate(self, user):
-        raise ServerUnimplementedException("Implementation authenticate?")
+        warnings.warn("authenticate", ServerUnimplementedWarning)
+        return False
 
     def hash_password(self, plain_password):
+        warnings.warn("hash_password = text_plain", ServerUnimplementedWarning)
         return plain_password
 
     def update_atrributes_for_user(self, user):
@@ -74,6 +76,10 @@ class ServerEmptyValueException(ServerException):
 class ServerUnimplementedException(ServerException):
     pass
 
+class ServerUnimplementedWarning(UserWarning):
+    pass
+
 
 class ServerInvalidCredentialException(ServerException):
     pass
+
