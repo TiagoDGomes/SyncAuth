@@ -49,8 +49,15 @@ except Exception as e:
 
 
 class TestDomainController(unittest.TestCase):
+    def test_admin_values(self):
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN, admin_username=TEST_AD_ADMIN_USER_NAME, admin_password=TEST_AD_ADMIN_PASSWORD)      
+        self.ad_server.search_base = TEST_AD_SEARCH_BASE  
+        self.set_user()
+        self.assertTrue(self.ad_server.authenticate(self.user))
+
+
     def set_normal(self):      
-        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN, admin_username=TEST_AD_ADMIN_USER_NAME, admin_password=TEST_AD_ADMIN_PASSWORD)      
         self.ad_server.admin_username = TEST_AD_ADMIN_USER_NAME
         self.ad_server.admin_password = TEST_AD_ADMIN_PASSWORD
         self.ad_server.search_base = TEST_AD_SEARCH_BASE   
@@ -62,7 +69,7 @@ class TestDomainController(unittest.TestCase):
 
     def test_invalid_admin_credentials(self):
         logging.debug("test_invalid_credentials")   
-        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN, admin_username=TEST_AD_ADMIN_USER_NAME, admin_password=TEST_AD_ADMIN_PASSWORD)      
         self.ad_server.admin_username = "aaaaaa"
         self.ad_server.admin_password = "bbbbbb"
         self.ad_server.search_base = TEST_AD_SEARCH_BASE
@@ -100,7 +107,7 @@ class TestDomainController(unittest.TestCase):
 
         
     def test_error_search_base_empty(self):        
-        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN)      
+        self.ad_server = DomainControllerServer(TEST_AD_SERVER_ADDRESS, TEST_AD_SERVER_DOMAIN, admin_username=TEST_AD_ADMIN_USER_NAME, admin_password=TEST_AD_ADMIN_PASSWORD)      
         self.ad_server.admin_username = TEST_AD_ADMIN_USER_NAME
         self.ad_server.admin_password = TEST_AD_ADMIN_PASSWORD
         self.set_user()

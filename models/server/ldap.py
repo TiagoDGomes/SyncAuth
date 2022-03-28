@@ -6,6 +6,8 @@ import ldap3
 
 class LDAPServer(AuthServer):
     def __init__(self, address, domain,
+                 admin_username,
+                 admin_password,
                  required_values=[],
                  auto_bind=ldap3.AUTO_BIND_TLS_BEFORE_BIND,
                  version=3,
@@ -27,6 +29,8 @@ class LDAPServer(AuthServer):
         self.field_user_password = field_user_password
         self.user_auth_format = user_auth_format
         self.user_group_attribute = user_group_attribute
+        self.admin_username = admin_username
+        self.admin_password = admin_password
 
     def check_connection(self):
         ''' Check if connection is active '''
@@ -40,10 +44,16 @@ class LDAPServer(AuthServer):
     def connect(self, username=None, password=None):
         ''' Connect LDAP server. If no value is passed, authentication is done with the administrator account '''
         admin_mode = False
+        logging.debug((username, 'connect'))
         if not username or not password:
+            if not self.admin_username :
+                raise ServerEmptyValuePropertyException("admin_username")
+            if not self.admin_password:
+                raise ServerEmptyValuePropertyException("admin_password")
             username = self.admin_username
             password = self.admin_password
             admin_mode = True
+            
         user_formatted = self.user_auth_format.format(
             username=username,
             domain=self.domain,
