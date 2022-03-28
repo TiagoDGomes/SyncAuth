@@ -21,7 +21,7 @@ if (!$username) {
 } else {
     $ds = ldap_connect($address); 
     if (!$ds){    
-        $response['errorMessage'] = 'Unable to connect to LDAP server';  
+        $response['errorMessage'] = 'Unable to connect to server';  
     } else {
         $sr = ldap_search($ds, $dn, "uid=$username");        
         $info = ldap_get_entries($ds, $sr);        
