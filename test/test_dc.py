@@ -1,14 +1,10 @@
-
-
-
 import logging
 import unittest
-from models.server.dc import DomainControllerServer
-from models import server as server_cls
-from models import user
 from pprint import pprint
 
-
+from models import server as server_cls
+from models import user
+from models.server.dc import DomainControllerServer
 
 try:
     from test.local_config import *

@@ -1,6 +1,8 @@
-from models.server import AuthServer
 import logging
+
 import requests
+from models.server import AuthServer
+
 
 class WebProxyLDAPServer(AuthServer):
     def __init__(self, address, domain, url, base_dn, key=None, form_user_name="username", form_user_pass="password", 

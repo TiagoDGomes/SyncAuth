@@ -1,8 +1,9 @@
 
-import unittest
-from models.server.web import WebProxyLDAPServer
-from models import user
 import logging
+import unittest
+
+from models import user
+from models.server.web import WebProxyLDAPServer
 
 try:
     from test.local_config import *

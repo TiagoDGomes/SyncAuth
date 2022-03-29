@@ -1,8 +1,8 @@
+import logging
+
+import ldap3
 from models.server import AuthServer, ServerEmptyValuePropertyException
 
-
-import logging
-import ldap3
 
 class LDAPServer(AuthServer):
     def __init__(self, address, domain,

@@ -1,5 +1,6 @@
 from models.server.ldap import LDAPServer
 
+
 class DomainControllerServer(LDAPServer):
     def __init__(self, *args, **kwargs):
         super(DomainControllerServer, self).__init__(*args, **kwargs)        
