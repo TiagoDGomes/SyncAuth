@@ -1,5 +1,5 @@
 import logging
-
+import time
 import ldap3
 from models.server import AuthServer, ServerEmptyValuePropertyException
 
@@ -67,8 +67,11 @@ class LDAPServer(AuthServer):
             domain=self.domain,
         )
         try:
+            logging.debug((username, 'connect pass Connection',user_formatted, password ))
             c = ldap3.Connection(server=self.address, user=user_formatted,
-                                 password=password, auto_bind=self.auto_bind)
+                                 password=password, auto_bind=self.auto_bind, lazy=False)
+            
+            logging.debug((username, 'admin_mode', admin_mode))
             if admin_mode:
                 self._connection = c
             logging.debug((username, "connect ok",))
@@ -80,14 +83,35 @@ class LDAPServer(AuthServer):
     def authenticate(self, user):
         ''' Authenticates the user with username and password. '''
         logging.debug((user.user_name, "authenticate"))
-        if not self.search_base:
-            raise ServerEmptyValuePropertyException("search_base")
         authenticated = False
-        if self.user_as_auth:
-            if self.connect(username=user.user_name, password=user.plain_password):
+        user_formatted = self.user_auth_format.format(
+            username=user.user_name,
+            domain=self.domain,
+        )
+        c = None
+        try:
+            # logging.debug((user.user_name, 'authenticate pass connection sleep', user_formatted, user.plain_password))
+            # time.sleep(3)
+            logging.debug((user.user_name, 'authenticate pass connection wake', user_formatted, user.plain_password))
+            s = ldap3.Server(self.address, get_info=ldap3.ALL)
+            c = ldap3.Connection(s, 
+                                 user=user_formatted,
+                                 password=user.plain_password, 
+                                 auto_bind=True,
+                                 lazy=False,)   
+            if c.bind():                                   
+                logging.debug((user.user_name, "authenticate ok"))
                 authenticated = True
-        else:
-            raise ServerUnimplementedException("authenticate - user_as_auth")
+                logging.debug((user.user_name, "authenticate unbind",))          
+        except ldap3.core.exceptions.LDAPBindError as e:            
+            logging.error((user.user_name, "LDAPBindError", e))
+        finally:
+            logging.debug((user.user_name, "authenticate finally",))
+            try:
+                c.unbind() 
+                del c   
+            except Exception as ex:
+                logging.debug((user.user_name, "authenticate finally exception", ex))        
         if authenticated:
             self.update_atrributes_for_user(user)
         return authenticated
@@ -103,6 +127,7 @@ class LDAPServer(AuthServer):
                 (ldap3.MODIFY_REPLACE,  self.hash_password(user.plain_password))]
         }
         try:
+            #logging.debug((user.user_name, "update_password_for_user","connection", self._connection))
             r = self._connection.modify(
                 user.attributes[self.domain]['dn'], attr_update)
             logging.debug(
@@ -128,11 +153,9 @@ class LDAPServer(AuthServer):
                 if 'dn' in entry:
                     user.attributes[self.domain] = entry
                     user.groups[self.domain] = entry['attributes'][self.user_group_attribute]
-                    logging.debug(
-                        (user.user_name, self.domain,
-                         user.groups[self.domain]
-                         )
-                    )
+                    # logging.debug(
+                    #     (user.user_name, user)
+                    # )
                     user.attributes[self.domain]['dn'] = entry['dn']
                     logging.debug((user.user_name, "dn", entry['dn']))
                     break
