@@ -22,14 +22,14 @@ class TestWebProxyLDAP(unittest.TestCase):
         self.user = user.User()
         self.user.user_name = "aaaaaa"
         self.user.plain_password = "bbbbbb" 
-        self.assertFalse(self.server.authenticate(self.user)) 
+        self.assertFalse(self.server.authenticate(self.user), "Expected: invalid credentials") 
 
     def test_valid(self):
         global TEST_USER_NAME, TEST_USER_PASS
         self.user = user.User()
         self.user.user_name = TEST_USER_NAME
         self.user.plain_password = TEST_USER_PASS 
-        self.assertTrue(self.server.authenticate(self.user)) 
+        self.assertTrue(self.server.authenticate(self.user), "Expected: valid credentials") 
 
     def test_change_password(self):   
         pass
