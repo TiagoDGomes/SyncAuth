@@ -14,6 +14,14 @@ except Exception as e:
     TEST_WEB_ADDRESS = "192.168.1.1"
     TEST_WEB_SEARCH_BASE = "dc=vvvv,dc=www,dc=zzz"
     TEST_WEB_KEY = "this_is_a_secret_key"
+    TEST_WEB_FORM_KEY = "key"
+    TEST_WEB_FORM_ADDRESS = "address"
+    TEST_WEB_FORM_USERNAME = "username"
+    TEST_WEB_FORM_PASSWORD = "password"
+    TEST_WEB_FORM_ADMIN_USERNAME = "admin_dn"
+    TEST_WEB_FORM_ADMIN_PASSWORD = "admin_pass"
+    TEST_WEB_ADMIN_USERNAME="uid=abc,ou=cde,ou=efg,ou=hij,dc=klm,dc=com,dc=br",
+    TEST_WEB_ADMIN_PASSWORD="my_secret_pass",
 
 
 class TestWebProxyLDAP(unittest.TestCase):
@@ -35,7 +43,21 @@ class TestWebProxyLDAP(unittest.TestCase):
         pass
 
     def setUp(self):
-        self.server = WebProxyLDAPServer(TEST_WEB_ADDRESS, TEST_WEB_DOMAIN, url=TEST_WEB_URL, base_dn=TEST_WEB_SEARCH_BASE, key=TEST_WEB_KEY)
+        self.server = WebProxyLDAPServer(
+                            TEST_WEB_ADDRESS, 
+                            TEST_WEB_DOMAIN, 
+                            url=TEST_WEB_URL, 
+                            base_dn=TEST_WEB_SEARCH_BASE, 
+                            key=TEST_WEB_KEY,
+                            form_key=TEST_WEB_FORM_KEY,
+                            form_user_name=TEST_WEB_FORM_USERNAME,
+                            form_user_pass=TEST_WEB_FORM_PASSWORD, 
+                            form_address=TEST_WEB_FORM_ADDRESS,                            
+                            form_admin_user_name=TEST_WEB_FORM_ADMIN_USERNAME,
+                            form_admin_password=TEST_WEB_FORM_ADMIN_PASSWORD, 
+                            admin_user_name=TEST_WEB_ADMIN_USERNAME,
+                            admin_password=TEST_WEB_ADMIN_PASSWORD,                            
+                            )
     
     def set_user(self):
         self.user = user.User()
