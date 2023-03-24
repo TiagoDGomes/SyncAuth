@@ -9,10 +9,8 @@ from models.server.dc import DomainControllerServer
 try:
     from test.local_config import *
 except Exception as e: 
-    logging.basicConfig(encoding='utf-8', level=logging.DEBUG, 
-        #filename='test.log', 
-        stream=sys.stdout,
-    ) 
+    import sys
+    logging.basicConfig(encoding='utf-8', level=logging.DEBUG, stream=sys.stdout, ) 
     logging.debug(('import local config error', e))
  
 
@@ -85,20 +83,45 @@ class TestDomainController(unittest.TestCase):
         self.assertIn(TEST_AD_USER_GROUP , self.user.groups)
         
 
-    def test_change_password(self):    
-        logging.debug("test_change_password")
+    def test_change_password(self): 
         self.set_normal()
         self.set_user()
         self.user.rebuild(TEST_GRUPOS_CONHECIDOS) 
-        self.user.plain_password = "a1b2P5232iwrfsdf321ewqd"
-        self.assertFalse(self.ad_server.authenticate(self.user), "User cannot authenticate with invalid password")
-        self.ad_server.update_password_for_user(self.user)
-        self.assertTrue(self.ad_server.authenticate(self.user), "User with changed password needs to authenticate")       
-        self.user.plain_password = TEST_USER_PASS
-        self.assertFalse(self.ad_server.authenticate(self.user), "User cannot authenticate with old password")
-        self.ad_server.update_password_for_user(self.user)
-        self.assertTrue(self.ad_server.authenticate(self.user), "User with reset password needs to authenticate")
 
+        self.user.plain_password = TEST_USER_PASS
+        self.ad_server.update_password_for_user(self.user)
+        test_reset_password_1 = self.ad_server.authenticate(self.user)
+
+        self.user.plain_password = "@!!invalid_password!!@"
+        test_invalid_1 = self.ad_server.authenticate(self.user)
+        
+        self.user.plain_password = "!(new_valid_password)!"
+        self.ad_server.update_password_for_user(self.user)
+        test_changed_password_1 = self.ad_server.authenticate(self.user)
+        
+        self.user.plain_password = "!(new_valid_password_2)!"
+        self.ad_server.update_password_for_user(self.user)
+        test_changed_password_2 = self.ad_server.authenticate(self.user)
+        
+        self.user.plain_password = "@!!invalid_password_2!!@"
+        test_invalid_2 = self.ad_server.authenticate(self.user)
+        
+        
+        self.user.plain_password = TEST_USER_PASS
+        self.ad_server.update_password_for_user(self.user)
+        test_reset_password_2 = self.ad_server.authenticate(self.user)
+
+        self.user.plain_password = "!(new_valid_password)!"
+        test_old_password_1 = self.ad_server.authenticate(self.user)
+
+
+        self.assertTrue(test_reset_password_1, "User with reset password needs to authenticate")
+        self.assertFalse(test_invalid_1, "User cannot authenticate with invalid password (1)")
+        self.assertTrue(test_changed_password_1, "User with changed password needs to authenticate (1)") 
+        self.assertTrue(test_changed_password_2, "User with changed password needs to authenticate (2)") 
+        self.assertFalse(test_invalid_2, "User cannot authenticate with invalid password (2)")
+        self.assertTrue(test_reset_password_2, "User with reset original password needs to authenticate")
+        self.assertFalse(test_old_password_1, "User cannot authenticate with old password")
 
 
         
