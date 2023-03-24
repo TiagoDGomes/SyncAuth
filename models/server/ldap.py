@@ -32,6 +32,14 @@ class LDAPServer(AuthServer):
         self.admin_username = admin_username
         self.admin_password = admin_password
 
+    def __del__(sel, *args, **kwargs):        
+        logging.debug(('__del__','unbind'))
+        try:
+            self._connection.unbind()
+        except:
+            pass
+        #super(LDAPServer, self).__del__(*args, **kwargs)
+
     def check_connection(self):
         ''' Check if connection is active '''
         logging.debug(("check_connection", ))
